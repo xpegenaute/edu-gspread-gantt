@@ -1,5 +1,6 @@
 var CONFIG_SHEET_NAME;
 var WEEK_DAYS;
+var TIME_OFFSET;
 
 if (!String.prototype.startsWith) {
     String.prototype.startsWith = function(searchString, position){
@@ -12,6 +13,7 @@ function initConfig() {
   if(DEBUG) {Logger.log("ConfigParser.initConfig()");}
   CONFIG_SHEET_NAME = "Config";
   WEEK_DAYS = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+  TIME_OFFSET = "GMT+2";
 }
 
 
@@ -77,9 +79,10 @@ ReadingHolidaysState.parse = function(row) {
   if (DEBUG >= 2) Logger.log(["ReadingHolidaysState.parse(", row , ")"].join());
   var isRange = !(row[1] === "");
   
-  var firstDate = moment.utc(row[0]);
+  var firstDate = moment.utc(Utilities.formatDate(row[0], TIME_OFFSET, "yyyy-MM-dd"));
+  Logger.log(firstDate.format());
   if(isRange) {
-    var lastDate = moment.utc(row[1]);
+    var lastDate = moment.utc(Utilities.formatDate(row[1], TIME_OFFSET, "yyyy-MM-dd"));
     var holidaysArray = [];
     var rangeDays = lastDate.diff(firstDate, "days");
     for (var i=0; i <= rangeDays; i++){
@@ -170,4 +173,3 @@ function getConfig() {
   Logger.log(JSON.stringify(config));
   return config;
 }
-
